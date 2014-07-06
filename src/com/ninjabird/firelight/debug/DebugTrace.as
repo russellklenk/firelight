@@ -29,7 +29,7 @@ package com.ninjabird.firelight.debug
 
             if (!match.left)
             {
-                if (match.pad == '0' || nosign)
+                if (match.pad === '0' || nosign)
                 {
                     res = match.sign + pad + match.argument;
                 }
@@ -40,7 +40,7 @@ package com.ninjabird.firelight.debug
             }
             else
             {
-                if (match.pad == '0' || nosign)
+                if (match.pad === '0' || nosign)
                 {
                     res = match.sign + match.argument + pad.replace(/0/g, ' ');
                 }
@@ -71,12 +71,12 @@ package com.ninjabird.firelight.debug
          */
         public static function sprintfArray(fmt:String, varargs:Array) : String
         {
-            if (null == fmt)
+            if (fmt === null)
             {
                 // return an empty string:
                 return '';
             }
-            if (0 == fmt.length || fmt.indexOf('%') < 0)
+            if (fmt.length === 0 || fmt.indexOf('%') < 0)
             {
                 // early out - no formatting needed:
                 return fmt;
@@ -105,21 +105,22 @@ package com.ninjabird.firelight.debug
                 strings[strings.length] = fmt.substring(strPosStart, strPosEnd);
                 matchPosEnd             = exp.lastIndex;
                 matches.push(
-                {
-                    match:     match[0],
-                    left:      match[3] ? true : false,
-                    sign:      match[4] || '',
-                    pad:       match[5] || ' ',
-                    min:       match[6] || 0,
-                    precision: match[8],
-                    code:      match[9] || '%',
-                    negative:  parseInt(varargs[convCount - 1]) < 0 ? true : false,
-                    argument:  String(varargs[convCount - 1])
-                });
+                    {
+                        match:     match[0],
+                        left:      match[3] ? true : false,
+                        sign:      match[4] || '',
+                        pad:       match[5] || ' ',
+                        min:       match[6] || 0,
+                        precision: match[8],
+                        code:      match[9] || '%',
+                        negative:  parseInt(varargs[convCount - 1]) < 0,
+                        argument:    String(varargs[convCount - 1])
+                    }
+                );
             }
             strings.push(fmt.substring(matchPosEnd));
 
-            if (0 == matches.length)
+            if (matches.length === 0)
             {
                 // no formatting needed:
                 return fmt;
@@ -134,60 +135,60 @@ package com.ninjabird.firelight.debug
             {
                 code = matches[i].code;
 
-                if ('%' == code)
+                if (code === '%')
                 {
                     // %% - escaped percent sign.
                     subst = '%';
                 }
-                else if ('b' == code)
+                else if (code === 'b')
                 {
                     // binary-formatted value.
                     matches[i].argument = String(Math.abs(parseInt(matches[i].argument)).toString(2));
                     subst               = DebugTrace.sprintfCvt(matches[i], true);
                 }
-                else if ('c' == code)
+                else if (code === 'c')
                 {
                     // character code value.
                     matches[i].argument = String(String.fromCharCode(Math.abs(parseInt(matches[i].argument))));
                     subst               = DebugTrace.sprintfCvt(matches[i], true);
                 }
-                else if ('d' == code)
+                else if (code === 'd')
                 {
                     // signed decimal value.
                     matches[i].argument = String(Math.abs(parseInt(matches[i].argument)));
                     subst               = DebugTrace.sprintfCvt(matches[i], false);
                 }
-                else if ('u' == code)
+                else if (code === 'u')
                 {
                     // unsigned decimal value.
                     matches[i].argument = String(Math.abs(parseInt(matches[i].argument)));
                     subst               = DebugTrace.sprintfCvt(matches[i], true);
                 }
-                else if ('f' == code)
+                else if (code === 'f')
                 {
                     // floating-point value.
                     matches[i].argument = String(Math.abs(parseFloat(matches[i].argument)).toFixed(matches[i].precision ? matches[i].precision : 6));
                     subst               = DebugTrace.sprintfCvt(matches[i], false);
                 }
-                else if ('o' == code)
+                else if (code === 'o')
                 {
                     // octal value.
                     matches[i].argument = String(Math.abs(parseInt(matches[i].argument)).toString(8));
                     subst               = DebugTrace.sprintfCvt(matches[i], false);
                 }
-                else if ('s' == code)
+                else if (code === 's')
                 {
                     // string value.
                     matches[i].argument = matches[i].argument.substring(0, matches[i].precision ? matches[i].precision : matches[i].argument.length);
                     subst               = DebugTrace.sprintfCvt(matches[i], true);
                 }
-                else if ('x' == code)
+                else if (code === 'x')
                 {
                     // hexadecimal value (lower-case digits).
                     matches[i].argument = String(Math.abs(parseInt(matches[i].argument)).toString(16));
                     subst               = DebugTrace.sprintfCvt(matches[i], false);
                 }
-                else if ('X' == code)
+                else if (code === 'X')
                 {
                     // hexadecimal value (upper-case digits).
                     matches[i].argument = String(Math.abs(parseInt(matches[i].argument)).toString(16));
